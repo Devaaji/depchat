@@ -145,29 +145,32 @@ const DashboardListMessages = () => {
             />
           </ListItem>
         )}
-        {Object.entries(chats)?.map((chat) => (
-          <React.Fragment key={chat[0]}>
-            <ListItem
-              onClick={() => updateInfoUser(chat[1].userInfo)}
-              sx={{
-                borderBottom: "1px solid gray",
-                background: "#F3F3F4",
-                mt: "5px",
-                "&:hover": {
-                  background: "#D3D6D9",
-                },
-              }}
-            >
-              <ListItemAvatar>
-                <Avatar src={chat[1].userInfo.photoURL}>D</Avatar>
-              </ListItemAvatar>
-              <ListItemText
-                primary={chat[1].userInfo.displayName}
-                secondary="Hello guys!"
-              />
-            </ListItem>
-          </React.Fragment>
-        ))}
+        {Object.entries(chats)
+          ?.sort((a, b) => b[1].date - a[1].date)
+          .map((chat) => (
+            <React.Fragment key={chat[0]}>
+              {console.log("liost", chat)}
+              <ListItem
+                onClick={() => updateInfoUser(chat)}
+                sx={{
+                  borderBottom: "1px solid gray",
+                  background: "#F3F3F4",
+                  mt: "5px",
+                  "&:hover": {
+                    background: "#D3D6D9",
+                  },
+                }}
+              >
+                <ListItemAvatar>
+                  <Avatar src={chat[1].userInfo.photoURL}>D</Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={chat[1].userInfo.displayName}
+                  secondary={chat[1].lastMessages?.text}
+                />
+              </ListItem>
+            </React.Fragment>
+          ))}
       </List>
     </Stack>
   );

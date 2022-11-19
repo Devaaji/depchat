@@ -40,8 +40,6 @@ const RegisterPage = () => {
 
       const storageRef = ref(storage, displayName);
 
-      console.log(res.user);
-
       const uploadTask = uploadBytesResumable(storageRef, uploadFiles);
 
       uploadTask.on(
