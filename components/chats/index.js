@@ -162,7 +162,10 @@ const Chats = () => {
                     sx={{
                       p: "8px",
                       height: "max-content",
-                      borderRadius: "10px 0px 10px 10px",
+                      borderRadius:
+                        message.senderId === currentUser.uid
+                          ? "10px 0px 10px 10px"
+                          : "0px 10px 10px 10px",
                       background:
                         message.senderId === currentUser.uid
                           ? "#d1f1cb"
