@@ -8,14 +8,6 @@ const Messages = ({ message }) => {
   const infoUser = useAuthUserStore((state) => state.infoUser);
   const currentUser = useAuthUserStore((state) => state.currentUser);
 
-  const ref = useRef();
-
-  useEffect(() => {
-    ref.current?.scrollIntoView({
-      behavior: "smooth",
-    });
-  }, [message]);
-
   return (
     <Box
       key={message.id}

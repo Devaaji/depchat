@@ -48,11 +48,10 @@ const Chats = () => {
   const currentUser = useAuthUserStore((state) => state.currentUser);
 
   const handleSend = async () => {
-    
-      ref.current.scrollIntoView({
-        behavior: "smooth",
-        block: "end",
-      });
+    ref.current.scrollIntoView({
+      behavior: "smooth",
+      block: "end",
+    });
 
     if (image) {
       const storageRef = ref(storage, idMessages);
@@ -110,7 +109,6 @@ const Chats = () => {
     event.code === "Enter" && handleSend();
   };
 
-
   return (
     <Box
       sx={{
@@ -121,7 +119,6 @@ const Chats = () => {
     >
       <DashboardHeaderChats />
       <Box
-        ref={ref}
         sx={{
           height: "79vh",
           overflow: "auto",
@@ -133,11 +130,15 @@ const Chats = () => {
             <Messages message={message} key={message.id} />
           ))}
         </Stack>
+        <Box
+          component="span"
+          ref={ref}
+        ></Box>
       </Box>
       <Box
         sx={{
           background: "#eff2f5",
-          height: "12vh",
+          height: "11vh",
           py: "20px",
           px: "10px",
         }}
