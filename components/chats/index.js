@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Avatar, Button, IconButton, Input, Typography } from "@mui/material";
 import { Stack } from "@mui/system";
 import Box from "@mui/material/Box";
@@ -16,8 +16,10 @@ import { db, storage } from "../../services/firebase";
 import useAuthUserStore from "../../store/useAuthUserStore";
 import { v4 as uuidv4 } from "uuid";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import Messages from "../messages";
 
 const Chats = () => {
+  const ref = useRef();
   const idMessages = uuidv4();
   const [messages, setMessages] = useState([]);
 
@@ -46,6 +48,12 @@ const Chats = () => {
   const currentUser = useAuthUserStore((state) => state.currentUser);
 
   const handleSend = async () => {
+    
+      ref.current.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+      });
+
     if (image) {
       const storageRef = ref(storage, idMessages);
 
@@ -98,6 +106,11 @@ const Chats = () => {
     setImage(null);
   };
 
+  const handleKeyEnter = (event) => {
+    event.code === "Enter" && handleSend();
+  };
+
+
   return (
     <Box
       sx={{
@@ -108,6 +121,7 @@ const Chats = () => {
     >
       <DashboardHeaderChats />
       <Box
+        ref={ref}
         sx={{
           height: "79vh",
           overflow: "auto",
@@ -116,78 +130,7 @@ const Chats = () => {
       >
         <Stack spacing={1}>
           {messages.messages?.map((message) => (
-            <Box
-              key={message.id}
-              sx={
-                {
-                  // border: "1px solid black",
-                }
-              }
-            >
-              <Stack
-                direction={
-                  message.senderId === currentUser.uid ? "row-reverse" : "row"
-                }
-                spacing={1}
-              >
-                <Stack justifyContent="start">
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Avatar
-                      src={
-                        message.senderId === currentUser.uid
-                          ? currentUser.photoURL
-                          : infoUser[1].userInfo.photoURL
-                      }
-                    >
-                      D
-                    </Avatar>
-                  </Box>
-                  <Typography
-                    sx={{
-                      color: "grey",
-                      fontSize: "12px",
-                      textAlign: "center",
-                    }}
-                  >
-                    20:30
-                  </Typography>
-                </Stack>
-                <Stack py="5px">
-                  <Box
-                    sx={{
-                      p: "8px",
-                      height: "max-content",
-                      borderRadius:
-                        message.senderId === currentUser.uid
-                          ? "10px 0px 10px 10px"
-                          : "0px 10px 10px 10px",
-                      background:
-                        message.senderId === currentUser.uid
-                          ? "#d1f1cb"
-                          : "white",
-                      boxShadow: 1,
-                    }}
-                  >
-                    {message.text}
-                  </Box>
-                  {message.img && (
-                    <Box sx={{ mt: "5px" }}>
-                      <img
-                        width={200}
-                        height={200}
-                        src={message.img}
-                        alt="Choose to something chat"
-                      />
-                    </Box>
-                  )}
-                </Stack>
-              </Stack>
-            </Box>
+            <Messages message={message} key={message.id} />
           ))}
         </Stack>
       </Box>
@@ -207,6 +150,7 @@ const Chats = () => {
             fullWidth
             placeholder="type something..."
             value={text}
+            onKeyDown={handleKeyEnter}
             onChange={(e) => setText(e.target.value)}
           />
           <Box>
