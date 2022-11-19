@@ -50,7 +50,8 @@ const Chats = () => {
   const handleSend = async () => {
     ref.current.scrollIntoView({
       behavior: "smooth",
-      block: "end",
+      block: "start",
+      Inline: "start",
     });
 
     if (image) {
@@ -130,10 +131,7 @@ const Chats = () => {
             <Messages message={message} key={message.id} />
           ))}
         </Stack>
-        <Box
-          component="span"
-          ref={ref}
-        ></Box>
+        {ref && <Box component="span" ref={ref} sx={{ p: "70px" }}></Box>}
       </Box>
       <Box
         sx={{
