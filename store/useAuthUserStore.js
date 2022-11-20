@@ -18,9 +18,11 @@ const useAuthUserStore = create(
       email,
       accessToken,
       currentUser: {},
+      infoStatus: "sended",
       infoUser: { notstate: true },
       updateCurrentUser: (currentUser) =>
         set(() => ({ currentUser: currentUser })),
+      updateInfoStatus: (infoStatus) => set(() => ({ infoStatus: infoStatus })),
       updateInfoUser: (infoUser) => set(() => ({ infoUser: infoUser })),
       setLogin: (newUid, newDisplayName, newEmail, newAccessToken) => {
         setCookie(null, "_i", newUid, {

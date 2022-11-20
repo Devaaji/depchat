@@ -19,7 +19,7 @@ import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import Messages from "../messages";
 
 const Chats = () => {
-  const ref = useRef();
+  const refScrollBar = useRef();
   const idMessages = uuidv4();
   const [messages, setMessages] = useState([]);
 
@@ -39,7 +39,8 @@ const Chats = () => {
     };
   }, [dataUserId]);
 
-  console.log("messages", messages);
+  const infoStatus = useAuthUserStore((state) => state.infoStatus);
+
 
   ///type mode
   const [text, setText] = useState("");
@@ -48,7 +49,7 @@ const Chats = () => {
   const currentUser = useAuthUserStore((state) => state.currentUser);
 
   const handleSend = async () => {
-    ref.current.scrollIntoView({
+    refScrollBar.current.scrollIntoView({
       behavior: "smooth",
       block: "start",
       Inline: "start",
@@ -85,6 +86,7 @@ const Chats = () => {
           text: text,
           senderId: currentUser.uid,
           date: Timestamp.now(),
+          status: infoStatus,
         }),
       });
     }
@@ -92,12 +94,14 @@ const Chats = () => {
     await updateDoc(doc(db, "userChats", currentUser.uid), {
       [dataUserId + ".lastMessages"]: {
         text,
+        status: infoStatus,
       },
       [dataUserId + ".date"]: serverTimestamp(),
     });
     await updateDoc(doc(db, "userChats", userUID), {
       [dataUserId + ".lastMessages"]: {
         text,
+        status: infoStatus,
       },
       [dataUserId + ".date"]: serverTimestamp(),
     });
@@ -124,6 +128,7 @@ const Chats = () => {
           height: "79vh",
           overflow: "auto",
           p: "10px",
+          py: "30px",
         }}
       >
         <Stack spacing={1}>
@@ -131,7 +136,9 @@ const Chats = () => {
             <Messages message={message} key={message.id} />
           ))}
         </Stack>
-        {ref && <Box component="span" ref={ref} sx={{ p: "70px" }}></Box>}
+        {ref && (
+          <Box component="span" ref={refScrollBar} sx={{ p: "70px" }}></Box>
+        )}
       </Box>
       <Box
         sx={{

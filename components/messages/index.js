@@ -3,6 +3,8 @@ import { Avatar, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import { Stack } from "@mui/system";
 import useAuthUserStore from "../../store/useAuthUserStore";
+import dayjs from "dayjs";
+import { BsCheckAll } from "react-icons/bs";
 
 const Messages = ({ message }) => {
   const infoUser = useAuthUserStore((state) => state.infoUser);
@@ -27,28 +29,9 @@ const Messages = ({ message }) => {
               display: "flex",
               justifyContent: "center",
             }}
-          >
-            <Avatar
-              src={
-                message.senderId === currentUser.uid
-                  ? currentUser.photoURL
-                  : infoUser[1].userInfo.photoURL
-              }
-            >
-              D
-            </Avatar>
-          </Box>
-          <Typography
-            sx={{
-              color: "grey",
-              fontSize: "12px",
-              textAlign: "center",
-            }}
-          >
-            20:30
-          </Typography>
+          ></Box>
         </Stack>
-        <Stack py="5px">
+        <Stack>
           <Box
             sx={{
               p: "8px",
@@ -62,7 +45,26 @@ const Messages = ({ message }) => {
               boxShadow: 1,
             }}
           >
-            {message.text}
+            <Stack direction="row" spacing={1}>
+              <Box>{message.text}</Box>
+              <Box sx={{ display: "flex", alignItems: "flex-end" }}>
+                <Typography
+                  sx={{
+                    color: "grey",
+                    fontSize: "8px",
+                    textAlign: "center",
+                    height: "max-content",
+                  }}
+                >
+                  {dayjs.unix(message.date.seconds).format("HH:mm")}
+                </Typography>
+                {message.status && message.senderId === currentUser.uid && (
+                  <BsCheckAll
+                    color={message.status === "accept" ? "blue" : "gray"}
+                  />
+                )}
+              </Box>
+            </Stack>
           </Box>
           {message.img && (
             <Box sx={{ mt: "5px" }}>

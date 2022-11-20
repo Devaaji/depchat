@@ -1,13 +1,18 @@
 import {
   Avatar,
+  Badge,
   List,
   ListItem,
   ListItemAvatar,
   ListItemText,
   Stack,
   TextField,
+  Typography,
 } from "@mui/material";
+import { Box } from "@mui/system";
+import dayjs from "dayjs";
 import {
+  arrayUnion,
   collection,
   doc,
   getDoc,
@@ -29,6 +34,8 @@ const DashboardListMessages = () => {
   const [err, setErr] = useState(false);
 
   const currentUser = useAuthUserStore((state) => state.currentUser);
+
+  const updateInfoStatus = useAuthUserStore((state) => state.updateInfoStatus);
 
   const handleSearch = async () => {
     const q = query(
@@ -110,6 +117,11 @@ const DashboardListMessages = () => {
     currentUser.uid && getChats();
   }, [currentUser.uid]);
 
+
+  // const handleClickUpdateStatus = async () => {
+  //   updateInfoStatus("accept");
+  // };
+
   const updateInfoUser = useAuthUserStore((state) => state.updateInfoUser);
 
   return (
@@ -136,8 +148,8 @@ const DashboardListMessages = () => {
               },
             }}
           >
-            <ListItemAvatar>
-              <Avatar src={user ? user.photoURL : ""}>D</Avatar>
+            <ListItemAvatar sx={{ border: "1px solid black" }}>
+              <Avatar src={user ? user.photoURL : ""}></Avatar>
             </ListItemAvatar>
             <ListItemText
               primary={user ? user.displayName : ""}
@@ -151,7 +163,10 @@ const DashboardListMessages = () => {
             <React.Fragment key={chat[0]}>
               {console.log("liost", chat)}
               <ListItem
-                onClick={() => updateInfoUser(chat)}
+                onClick={() => {
+                  updateInfoUser(chat);
+                  // handleClickUpdateStatus();
+                }}
                 sx={{
                   borderBottom: "1px solid gray",
                   background: "#F3F3F4",
@@ -162,12 +177,24 @@ const DashboardListMessages = () => {
                 }}
               >
                 <ListItemAvatar>
-                  <Avatar src={chat[1].userInfo.photoURL}>D</Avatar>
+                  <Badge
+                    color={
+                      chat[1].lastMessages?.status === "sended"
+                        ? "success"
+                        : "default"
+                    }
+                    variant="dot"
+                  >
+                    <Avatar src={chat[1].userInfo.photoURL}></Avatar>
+                  </Badge>
                 </ListItemAvatar>
                 <ListItemText
                   primary={chat[1].userInfo.displayName}
                   secondary={chat[1].lastMessages?.text}
                 />
+                <Typography>
+                  {dayjs.unix(chat[1].date?.seconds).format("HH:mm")}
+                </Typography>
               </ListItem>
             </React.Fragment>
           ))}
