@@ -5,6 +5,7 @@ import { Stack } from "@mui/system";
 import useAuthUserStore from "../../store/useAuthUserStore";
 import dayjs from "dayjs";
 import { BsCheckAll } from "react-icons/bs";
+import Image from "next/image";
 
 const Messages = ({ message }) => {
   const infoUser = useAuthUserStore((state) => state.infoUser);
@@ -68,9 +69,10 @@ const Messages = ({ message }) => {
           </Box>
           {message.img && (
             <Box sx={{ mt: "5px" }}>
-              <img
+              <Image
                 width={200}
                 height={200}
+                layout="responsive"
                 src={message.img}
                 alt="Choose to something chat"
               />

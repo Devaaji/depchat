@@ -18,6 +18,7 @@ import React, { useState } from "react";
 import { FiMoreVertical } from "react-icons/fi";
 import { auth } from "../../../services/firebase";
 import useAuthUserStore from "../../../store/useAuthUserStore";
+import ModalCurrentProfile from "../../modals/modalCurrentProfile";
 
 const DashboardNavbar = () => {
   const setLogout = useAuthUserStore((state) => state.setLogout);
@@ -38,6 +39,14 @@ const DashboardNavbar = () => {
   };
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const [openProfile, setOpenProfile] = useState(false);
+  const handleOpenProfile = () => {
+    setOpenProfile(true);
+  };
+  const handleCloseProfile = () => {
+    setOpenProfile(false);
   };
 
   return (
@@ -78,12 +87,16 @@ const DashboardNavbar = () => {
             open={open}
             onClose={handleClose}
           >
-            <MenuItem>Profile</MenuItem>
+            <MenuItem onClick={handleOpenProfile}>Profile</MenuItem>
             <MenuItem>Settings</MenuItem>
             <MenuItem onClick={handleLogout}>Logout</MenuItem>
           </Menu>
         </Toolbar>
       </AppBar>
+      <ModalCurrentProfile
+        open={openProfile}
+        handleClose={handleCloseProfile}
+      />
     </Box>
   );
 };
