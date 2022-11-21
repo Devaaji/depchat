@@ -71,7 +71,6 @@ const LoginPages = () => {
         // The signed-in user info.
         return result.user;
       });
-      console.log("user", user);
       await updateProfile(user, {
         displayName: user.displayName,
         photoURL: user.photoURL,
@@ -84,7 +83,7 @@ const LoginPages = () => {
       });
       await setDoc(doc(db, "userChats", user.uid), {});
       await setLogin(user.uid, user.displayName, user.email, user.accessToken);
-      router.push("/");
+      router.reload("/");
     } catch (error) {
       console.log(error);
     }
