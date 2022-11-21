@@ -18,7 +18,7 @@ import {
   signInWithPopup,
   updateProfile,
 } from "firebase/auth";
-import { auth, db, provider } from "../services/firebase";
+import { auth, db, providerGoogle } from "../services/firebase";
 import { useRouter } from "next/router";
 import { getServerSidePropsWithNoAuth } from "../utils/getServerWithNoAuth";
 import useAuthUserStore from "../store/useAuthUserStore";
@@ -64,13 +64,29 @@ const LoginPages = () => {
   //login google
   const handleSigninWithGoogle = async () => {
     try {
-      const user = await signInWithPopup(auth, provider).then((result) => {
-        // This gives you a Google Access Token. You can use it to access the Google API.
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
-        // The signed-in user info.
-        return result.user;
-      });
+      const user = await signInWithPopup(auth, providerGoogle)
+        .then((result) => {
+          // This gives you a Google Access Token. You can use it to access the Google API.
+          const credential = GoogleAuthProvider.credentialFromResult(result);
+          const token = credential.accessToken;
+          // The signed-in user info.
+          return result.user;
+        })
+        .catch((error) => {
+          // Handle Errors here.
+          const errorCode = error.code;
+          console.log(errorCode);
+          const errorMessage = error.message;
+          // The email of the user's account used.
+          console.log(errorMessage);
+          const email = error.customData.email;
+          console.log(email)
+          // The AuthCredential type that was used.
+          const credential = GoogleAuthProvider.credentialFromError(error);
+          // ...
+          console.log(credential)
+        });
+
       await updateProfile(user, {
         displayName: user.displayName,
         photoURL: user.photoURL,
@@ -88,6 +104,8 @@ const LoginPages = () => {
       console.log(error);
     }
   };
+
+  const handleSiginWithFacebook = () => {};
 
   return (
     <Box
@@ -179,7 +197,7 @@ const LoginPages = () => {
             <IconButton aria-label="google" onClick={handleSigninWithGoogle}>
               <FcGoogle />
             </IconButton>
-            <IconButton aria-label="facebook">
+            <IconButton aria-label="facebook" onClick={handleSiginWithFacebook}>
               <BsFacebook color="#38519a" />
             </IconButton>
             <IconButton aria-label="github">
