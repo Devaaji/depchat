@@ -54,7 +54,7 @@ const DashboardNavbar = () => {
           <Box component="div" sx={{ flexGrow: 1 }}>
             <Stack direction="row" alignItems="center" spacing={1}>
               <Tooltip title={currentUser.displayName} arrow>
-                <Avatar src={currentUser ? currentUser.photoURL : ""}></Avatar>
+                <Avatar src={currentUser.photoURL}></Avatar>
               </Tooltip>
             </Stack>
           </Box>

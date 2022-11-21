@@ -27,6 +27,7 @@ export default function Home() {
 
   const infoUser = useAuthUserStore((state) => state.infoUser);
 
+
   return (
     <DashboardLayout>
       {infoUser.notstate === true ? (

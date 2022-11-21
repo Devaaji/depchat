@@ -45,6 +45,8 @@ const RegisterPage = () => {
     try {
       const res = await createUserWithEmailAndPassword(auth, email, password);
 
+      console.log('res reg', res)
+
       const storageRef = ref(storage, displayName);
 
       const uploadTask = uploadBytesResumable(storageRef, uploadFiles);
