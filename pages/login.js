@@ -13,19 +13,25 @@ import {
 import NextLink from "next/link";
 import { Box, Stack } from "@mui/system";
 import {
+  FacebookAuthProvider,
   GoogleAuthProvider,
   signInWithEmailAndPassword,
   signInWithPopup,
   updateProfile,
 } from "firebase/auth";
-import { auth, db, providerGoogle } from "../services/firebase";
+import {
+  auth,
+  db,
+  providerFacebook,
+  providerGoogle,
+} from "../services/firebase";
 import { useRouter } from "next/router";
 import { getServerSidePropsWithNoAuth } from "../utils/getServerWithNoAuth";
 import useAuthUserStore from "../store/useAuthUserStore";
 import { FcGoogle } from "react-icons/fc";
 import { BsFacebook, BsGithub } from "react-icons/bs";
 import { LoadingButton } from "@mui/lab";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 const LoginPages = () => {
   const router = useRouter();
@@ -79,17 +85,16 @@ const LoginPages = () => {
           const credential = GoogleAuthProvider.credentialFromError(error);
           console.log(credential);
         });
-      await updateProfile(user, {
-        displayName: user.displayName,
-        photoURL: user.photoURL,
-      });
       await setDoc(doc(db, "users", user.uid), {
         uid: user.uid,
         displayName: user.displayName,
         email: user.email,
         photoURL: user.photoURL,
       });
-      await setDoc(doc(db, "userChats", user.uid), {});
+      const res = await getDoc(doc(db, "userChats", user.uid));
+      if (!res.exists()) {
+        await setDoc(doc(db, "userChats", user.uid), {});
+      }
       await setLogin(user.uid, user.displayName, user.email, user.accessToken);
       router.reload("/");
     } catch (error) {
@@ -97,7 +102,34 @@ const LoginPages = () => {
     }
   };
 
-  const handleSiginWithFacebook = () => {};
+  const handleSiginWithFacebook = async () => {
+    try {
+      const user = await signInWithPopup(auth, providerFacebook)
+        .then((result) => {
+          const credential = FacebookAuthProvider.credentialFromResult(result);
+          const accessToken = credential.accessToken;
+          // This gives you a Facebook Access Token. You can use it to access the Facebook API.
+          const user = result.user;
+          console.log("user", accessToken);
+          // ...
+        })
+        .catch((error) => {
+          // Handle Errors here.
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log("errorMessage", errorMessage);
+          // The email of the user's account used.
+          const email = error.customData.email;
+          console.log("email", email);
+          // The AuthCredential type that was used.
+          const credential = FacebookAuthProvider.credentialFromError(error);
+          console.log("crendetial", credential);
+          // ...
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <Box
