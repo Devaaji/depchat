@@ -117,7 +117,6 @@ const DashboardListMessages = () => {
     currentUser.uid && getChats();
   }, [currentUser.uid]);
 
-
   // const handleClickUpdateStatus = async () => {
   //   updateInfoStatus("accept");
   // };
@@ -148,7 +147,7 @@ const DashboardListMessages = () => {
               },
             }}
           >
-            <ListItemAvatar sx={{ border: "1px solid black" }}>
+            <ListItemAvatar>
               <Avatar src={user ? user.photoURL : ""}></Avatar>
             </ListItemAvatar>
             <ListItemText

@@ -122,13 +122,9 @@ const LoginPages = () => {
 
           <LoadingButton
             type="submit"
-            sx={{
-              background: "linear-gradient(to right bottom, #0889ed, #0aceec)",
-              color: "white",
-            }}
             loading={isLoading}
             fullWidth
-            variant="outlined"
+            variant="contained"
             disabled={isButtonActive}
           >
             Login

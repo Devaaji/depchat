@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import NextLink from "next/link";
 import {
   Box,
@@ -13,27 +13,34 @@ import { LoadingButton } from "@mui/lab";
 import { BsFacebook, BsGithub } from "react-icons/bs";
 import { FcGoogle } from "react-icons/fc";
 import { BiImageAdd } from "react-icons/bi";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
 import { auth, db, storage } from "../services/firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { doc, setDoc } from "firebase/firestore";
 import { useRouter } from "next/router";
+import useAuthUserStore from "../store/useAuthUserStore";
+import { getServerSidePropsWithNoAuth } from "../utils/getServerWithNoAuth";
 
 const RegisterPage = () => {
   const router = useRouter();
   const [isError, setIsError] = useState(false);
   const [uploadFiles, setUploadFiles] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isButtonActive, setIsButtonActive] = useState(true);
+
+  const [displayName, setDisplayName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const setLogin = useAuthUserStore((state) => state.setLogin);
 
   const handleRegisterFuction = async (event) => {
     event.preventDefault();
     setIsLoading(true);
-
-    const displayName = event.target[0].value;
-    const email = event.target[1].value;
-    const password = event.target[2].value;
-
-    console.log(displayName, email, password, uploadFiles);
 
     try {
       const res = await createUserWithEmailAndPassword(auth, email, password);
@@ -61,7 +68,18 @@ const RegisterPage = () => {
               photoURL: downloadURL,
             });
             await setDoc(doc(db, "userChats", res.user.uid), {});
-            await router.push("/login");
+            await signInWithEmailAndPassword(auth, email, password).then(
+              (userCredential) => {
+                const user = userCredential.user;
+                setLogin(
+                  user.uid,
+                  user.displayName,
+                  user.email,
+                  user.accessToken
+                );
+                router.reload("/");
+              }
+            );
             setIsLoading(false);
           });
         }
@@ -71,6 +89,14 @@ const RegisterPage = () => {
       setIsError(true);
     }
   };
+
+  useEffect(() => {
+    if (displayName.length > 0 && email.length > 0 && password.length > 0) {
+      setIsButtonActive(false);
+    } else {
+      setIsButtonActive(true);
+    }
+  }, [displayName, email, password]);
 
   return (
     <Box
@@ -119,16 +145,18 @@ const RegisterPage = () => {
             label="Display Name"
             name="displayName"
             autoFocus
+            onChange={(e) => setDisplayName(e.target.value)}
           />
           <TextField
             variant="filled"
             required
             fullWidth
+            placeholder="example@gmail.com"
             color="primary"
             id="email"
             label="email"
             name="email"
-            autoFocus
+            onChange={(e) => setEmail(e.target.value)}
           />
           <TextField
             id="outlined-password-input"
@@ -137,6 +165,7 @@ const RegisterPage = () => {
             error={false}
             label="Password"
             type="password"
+            onChange={(e) => setPassword(e.target.value)}
           />
           <Stack direction="row" spacing={2} alignItems="center">
             <Box>
@@ -155,19 +184,16 @@ const RegisterPage = () => {
               </IconButton>
             </Box>
             <Typography color="gray">
-              {uploadFiles ? uploadFiles.name : "Upload your photo*"}
+              {uploadFiles ? uploadFiles.name : "Upload your photo - Max 1MB*"}
             </Typography>
           </Stack>
 
           <LoadingButton
             loading={isLoading}
             type="submit"
-            sx={{
-              background: "linear-gradient(to right bottom, #0889ed, #0aceec)",
-              color: "white",
-            }}
             fullWidth
-            variant="outlined"
+            variant="contained"
+            disabled={isButtonActive}
           >
             REGISTER
           </LoadingButton>
@@ -204,5 +230,8 @@ const RegisterPage = () => {
     </Box>
   );
 };
+
+export const getServerSideProps = async (context) =>
+  getServerSidePropsWithNoAuth(context);
 
 export default RegisterPage;
