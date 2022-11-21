@@ -64,13 +64,14 @@ const LoginPages = () => {
   //login google
   const handleSigninWithGoogle = async () => {
     try {
-      const user = await signInWithPopup(auth, providerGoogle)
+      await signInWithPopup(auth, providerGoogle)
         .then((result) => {
           // This gives you a Google Access Token. You can use it to access the Google API.
           const credential = GoogleAuthProvider.credentialFromResult(result);
           const token = credential.accessToken;
           // The signed-in user info.
-          return result.user;
+          const user = result.user;
+          console.log("user", user);
         })
         .catch((error) => {
           // Handle Errors here.
@@ -80,26 +81,26 @@ const LoginPages = () => {
           // The email of the user's account used.
           console.log(errorMessage);
           const email = error.customData.email;
-          console.log(email)
+          console.log(email);
           // The AuthCredential type that was used.
           const credential = GoogleAuthProvider.credentialFromError(error);
           // ...
-          console.log(credential)
+          console.log(credential);
         });
 
-      await updateProfile(user, {
-        displayName: user.displayName,
-        photoURL: user.photoURL,
-      });
-      await setDoc(doc(db, "users", user.uid), {
-        uid: user.uid,
-        displayName: user.displayName,
-        email: user.email,
-        photoURL: user.photoURL,
-      });
-      await setDoc(doc(db, "userChats", user.uid), {});
-      await setLogin(user.uid, user.displayName, user.email, user.accessToken);
-      router.reload("/");
+      // await updateProfile(user, {
+      //   displayName: user.displayName,
+      //   photoURL: user.photoURL,
+      // });
+      // await setDoc(doc(db, "users", user.uid), {
+      //   uid: user.uid,
+      //   displayName: user.displayName,
+      //   email: user.email,
+      //   photoURL: user.photoURL,
+      // });
+      // await setDoc(doc(db, "userChats", user.uid), {});
+      // await setLogin(user.uid, user.displayName, user.email, user.accessToken);
+      // router.reload("/");
     } catch (error) {
       console.log(error);
     }

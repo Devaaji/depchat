@@ -21,5 +21,4 @@ export const auth = getAuth();
 export const storage = getStorage();
 export const db = getFirestore();
 export const providerGoogle = new GoogleAuthProvider();
-providerGoogle.addScope("https://www.googleapis.com/auth/contacts.readonly");
 export const providerFacebook = new FacebookAuthProvider();
