@@ -8,6 +8,7 @@ import {
   Stack,
   TextField,
   Toolbar,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { Box } from "@mui/system";
@@ -22,8 +23,6 @@ const DashboardNavbar = () => {
   const setLogout = useAuthUserStore((state) => state.setLogout);
   const currentUser = useAuthUserStore((state) => state.currentUser);
   const router = useRouter();
-
-  console.log("USERRR", currentUser);
 
   const handleLogout = async () => {
     await setLogout();
@@ -54,13 +53,9 @@ const DashboardNavbar = () => {
         <Toolbar sx={{ display: "flex" }}>
           <Box component="div" sx={{ flexGrow: 1 }}>
             <Stack direction="row" alignItems="center" spacing={1}>
-              <Avatar
-                src={
-                  currentUser
-                    ? currentUser.photoURL
-                    : ""
-                }
-              ></Avatar>
+              <Tooltip title={currentUser.displayName} arrow>
+                <Avatar src={currentUser ? currentUser.photoURL : ""}></Avatar>
+              </Tooltip>
             </Stack>
           </Box>
           <IconButton
