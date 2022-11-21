@@ -46,9 +46,35 @@ const Messages = ({ message }) => {
               boxShadow: 1,
             }}
           >
-            <Stack direction="row" spacing={1}>
-              <Box>{message.text}</Box>
-              <Box sx={{ display: "flex", alignItems: "flex-end" }}>
+            {message.img && (
+              <Image
+                width={200}
+                height={200}
+                layout="responsive"
+                src={message.img}
+                alt="Choose to something chat"
+              />
+            )}
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              spacing={1}
+            >
+              <Box
+                sx={{
+                  maxWidth: "500px",
+                  wordWrap: "break-word",
+                }}
+              >
+                {message.text}
+              </Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  width: "max-content",
+                  alignItems: "flex-end",
+                }}
+              >
                 <Typography
                   sx={{
                     color: "grey",
@@ -67,17 +93,6 @@ const Messages = ({ message }) => {
               </Box>
             </Stack>
           </Box>
-          {message.img && (
-            <Box sx={{ mt: "5px" }}>
-              <Image
-                width={200}
-                height={200}
-                layout="responsive"
-                src={message.img}
-                alt="Choose to something chat"
-              />
-            </Box>
-          )}
         </Stack>
       </Stack>
     </Box>

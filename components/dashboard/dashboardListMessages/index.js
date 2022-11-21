@@ -160,7 +160,6 @@ const DashboardListMessages = () => {
           ?.sort((a, b) => b[1].date - a[1].date)
           .map((chat) => (
             <React.Fragment key={chat[0]}>
-              {console.log("liost", chat)}
               <ListItem
                 onClick={() => {
                   updateInfoUser(chat);
@@ -188,10 +187,13 @@ const DashboardListMessages = () => {
                   </Badge>
                 </ListItemAvatar>
                 <ListItemText
+                  sx={{
+                    overflow: "hidden",
+                  }}
                   primary={chat[1].userInfo.displayName}
                   secondary={chat[1].lastMessages?.text}
                 />
-                <Typography>
+                <Typography ml="10px">
                   {dayjs.unix(chat[1].date?.seconds).format("HH:mm")}
                 </Typography>
               </ListItem>
