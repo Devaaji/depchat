@@ -13,14 +13,26 @@ import {
 } from "@mui/material";
 import { Box } from "@mui/system";
 import Image from "next/image";
-import React from "react";
-import { MdAddAPhoto } from "react-icons/md";
+import React, { useState } from "react";
+import { BsFillPersonFill, BsFillTelephonePlusFill } from "react-icons/bs";
+import { MdAddAPhoto, MdEmail } from "react-icons/md";
 import useAuthUserStore from "../../../store/useAuthUserStore";
+import ModalEditProfile from "../modalEditProfile";
 
 const ModalCurrentProfile = ({ open, handleClose }) => {
   const currentUser = useAuthUserStore((state) => state.currentUser);
+  const updateInfoStatusProfile = useAuthUserStore(
+    (state) => state.updateInfoStatusProfile
+  );
 
-  console.log("user", currentUser);
+  const [openEdit, setOpenEdit] = useState(false);
+
+  const handleOpenEdit = () => {
+    setOpenEdit(true);
+  };
+  const handleCloseEdit = () => {
+    setOpenEdit(false);
+  };
 
   const styleModal = {
     position: "absolute",
@@ -77,25 +89,110 @@ const ModalCurrentProfile = ({ open, handleClose }) => {
               />
             </Badge>
           </Box>
-          <List sx={{ border:'1px solid white', width: '100%', mt: '25px'}}>
-            <ListItem disablePadding>
+          <List
+            sx={{
+              width: "100%",
+              mt: "25px",
+            }}
+          >
+            <ListItem
+              disablePadding
+              onClick={() => {
+                handleOpenEdit();
+                updateInfoStatusProfile({
+                  nameLabel: "Display Name",
+                  nameValue: currentUser.displayName,
+                });
+              }}
+            >
               <ListItemButton>
                 <ListItemIcon>
-                    1
+                  <BsFillPersonFill color="white" />
                 </ListItemIcon>
-                <ListItemText primary="Inbox" />
+                <ListItemText
+                  primary={<Typography color="white">Display Name</Typography>}
+                  secondary={
+                    <React.Fragment>
+                      <Typography
+                        sx={{ display: "inline", color: "gray" }}
+                        component="span"
+                        variant="body2"
+                        color="text.primary"
+                      >
+                        {currentUser.displayName}
+                      </Typography>
+                    </React.Fragment>
+                  }
+                />
               </ListItemButton>
             </ListItem>
-            <ListItem disablePadding>
+            <ListItem
+              disablePadding
+              onClick={() => {
+                handleOpenEdit();
+                updateInfoStatusProfile({
+                  nameLabel: "Email",
+                  nameValue: currentUser.email,
+                });
+              }}
+            >
               <ListItemButton>
                 <ListItemIcon>
-                    2
+                  <MdEmail color="white" />
                 </ListItemIcon>
-                <ListItemText primary="Drafts" />
+                <ListItemText
+                  primary="Email"
+                  secondary={
+                    <React.Fragment>
+                      <Typography
+                        sx={{ display: "inline", color: "gray" }}
+                        component="span"
+                        variant="body2"
+                        color="text.primary"
+                      >
+                        {currentUser.email}
+                      </Typography>
+                    </React.Fragment>
+                  }
+                />
+              </ListItemButton>
+            </ListItem>
+            <ListItem
+              disablePadding
+              onClick={() => {
+                handleOpenEdit();
+                updateInfoStatusProfile({
+                  nameLabel: "Phone Number",
+                  nameValue: currentUser.phoneNumber,
+                });
+              }}
+            >
+              <ListItemButton>
+                <ListItemIcon>
+                  <BsFillTelephonePlusFill color="white" />
+                </ListItemIcon>
+                <ListItemText
+                  primary="Phone Number"
+                  secondary={
+                    <React.Fragment>
+                      <Typography
+                        sx={{ display: "inline", color: "gray" }}
+                        component="span"
+                        variant="body2"
+                        color="text.primary"
+                      >
+                        {currentUser.phoneNumber
+                          ? currentUser.phoneNumber
+                          : "-"}
+                      </Typography>
+                    </React.Fragment>
+                  }
+                />
               </ListItemButton>
             </ListItem>
           </List>
         </Box>
+        <ModalEditProfile open={openEdit} handleClose={handleCloseEdit} />
       </Box>
     </Modal>
   );

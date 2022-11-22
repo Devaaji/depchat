@@ -23,6 +23,8 @@ import ModalCurrentProfile from "../../modals/modalCurrentProfile";
 const DashboardNavbar = () => {
   const setLogout = useAuthUserStore((state) => state.setLogout);
   const currentUser = useAuthUserStore((state) => state.currentUser);
+
+  console.log('currentUser', currentUser);
   const router = useRouter();
 
   const handleLogout = async () => {

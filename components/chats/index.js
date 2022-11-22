@@ -17,6 +17,7 @@ import useAuthUserStore from "../../store/useAuthUserStore";
 import { v4 as uuidv4 } from "uuid";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import Messages from "../messages";
+import Image from "next/image";
 
 const Chats = () => {
   const refScrollBar = useRef();
@@ -28,6 +29,8 @@ const Chats = () => {
   const dataUserId = infoUser[0];
 
   const userUID = infoUser[1].userInfo.uid;
+
+  console.log("user UID: ", dataUserId);
 
   useEffect(() => {
     const unsub = onSnapshot(doc(db, "chats", dataUserId), (doc) => {
@@ -41,11 +44,18 @@ const Chats = () => {
 
   const infoStatus = useAuthUserStore((state) => state.infoStatus);
 
-
   ///type mode
   const [text, setText] = useState("");
   const [image, setImage] = useState(null);
+  const [createObjectURL, setCreateObjectURL] = useState(null);
 
+  const uploadToClient = (event) => {
+    if (event.target.files && event.target.files[0]) {
+      const i = event.target.files[0];
+      setImage(i);
+      setCreateObjectURL(URL.createObjectURL(i));
+    }
+  };
   const currentUser = useAuthUserStore((state) => state.currentUser);
 
   const handleSend = async () => {
@@ -74,6 +84,7 @@ const Chats = () => {
                 senderId: currentUser.uid,
                 date: Timestamp.now(),
                 img: downloadURL,
+                status: infoStatus,
               }),
             });
           });
@@ -108,6 +119,7 @@ const Chats = () => {
 
     setText("");
     setImage(null);
+    setCreateObjectURL(null);
   };
 
   const handleKeyEnter = (event) => {
@@ -123,8 +135,36 @@ const Chats = () => {
       }}
     >
       <DashboardHeaderChats />
+
+      {createObjectURL && (
+        <Box
+          sx={{
+            height: "79vh",
+            overflow: "auto",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            bgcolor: "#64686C",
+          }}
+        >
+          <Box
+            sx={{
+              width: "300px",
+            }}
+          >
+            <Image
+              width={200}
+              height={200}
+              layout="responsive"
+              src={createObjectURL}
+              alt="Choose to something chat"
+            />
+          </Box>
+        </Box>
+      )}
       <Box
         sx={{
+          display: createObjectURL ? "none" : "block",
           height: "79vh",
           overflow: "auto",
           p: "10px",
@@ -169,7 +209,7 @@ const Chats = () => {
                 hidden
                 accept="image/*"
                 type="file"
-                onChange={(e) => setImage(e.target.files[0])}
+                onChange={uploadToClient}
               />
               <BiImageAdd />
             </IconButton>
