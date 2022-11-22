@@ -21,8 +21,6 @@ const ModalEditProfile = ({ open, handleClose }) => {
     pb: 3,
   };
 
-  const currentUser = useAuthUserStore((state) => state.currentUser);
-
   const infoStatusProfile = useAuthUserStore(
     (state) => state.infoStatusProfile
   );
@@ -31,12 +29,6 @@ const ModalEditProfile = ({ open, handleClose }) => {
     if (infoStatusProfile.nameLabel === "Display Name") {
       await updateProfile(auth.currentUser, {
         displayName: editProfile,
-      })
-      await updateDoc(doc(db, "userChats", currentUser.uid), {
-        [dataUserId + ".lastMessages"]: {
-          text,
-          status: infoStatus,
-        },
       }).then(() => {
         handleClose();
       });
